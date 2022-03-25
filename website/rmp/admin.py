@@ -1,11 +1,11 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .serializers import CustomUserCreationSerializer
+from .serializers import CustomUserSerializer
 from .models import CustomUser
 
 class CustomUserAdmin(UserAdmin):
-    serializer = CustomUserCreationSerializer
+    serializer = CustomUserSerializer
     model = CustomUser
     list_display = ["email", "username",]
 
