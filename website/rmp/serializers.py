@@ -6,8 +6,6 @@ class CustomUserCreationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ["username", "email"]
-        write_only_fields = ["password"]
+        fields = ["username", "email", "password"]
 
-        extra_kwargs = {'username': {'required': True}}
-        extra_kwargs = {'email': {'required': True}}
+        extra_kwargs = {'email': {'required': True, 'allow_blank': False}, 'password': {'required': True, 'allow_blank': False, "write_only": True}}
