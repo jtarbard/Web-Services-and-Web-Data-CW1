@@ -3,10 +3,13 @@ from django.urls import path
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from rmp.views import CustomUserViewSet
+from rmp.views import UserViewSet, ModuleViewSet, ProfessorViewSet, RatingViewSet
 
 router = DefaultRouter()
-router.register(r'student', CustomUserViewSet)
+router.register(r'user', UserViewSet)
+router.register(r'module', ModuleViewSet)
+router.register(r'professor', ProfessorViewSet)
+router.register(r'rating', RatingViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
