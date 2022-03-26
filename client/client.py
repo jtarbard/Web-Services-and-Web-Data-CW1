@@ -51,7 +51,9 @@ def login(obj = None):
         print("Exception Occured: ", e)
 
 def logout():
+    global token
     token = None
+    print("Logout Successful")
 
 def checkToken():
     print(token)
