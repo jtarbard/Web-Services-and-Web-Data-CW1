@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate, login
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from rest_framework.viewsets import ViewSet, ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 
 from .models import CustomUser, Module, Professor, Rating
@@ -10,6 +11,7 @@ class UserViewSet(ModelViewSet):
 
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
+
 
 class ModuleViewSet(ReadOnlyModelViewSet):
 
@@ -22,6 +24,8 @@ class ProfessorViewSet(ReadOnlyModelViewSet):
     serializer_class = ProfessorSerializer
 
 class RatingViewSet(ModelViewSet):
+
+    permission_classes = [IsAuthenticated,]
 
     queryset = Rating.objects.all()
     serializer_class = RatingSerializer

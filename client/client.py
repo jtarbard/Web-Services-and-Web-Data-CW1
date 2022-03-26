@@ -1,11 +1,13 @@
 import requests
+import os
 
 root = "http://127.0.0.1:8000/"
 commands = ["register", "login", "logout", "list", "view", "average", "rate", "exit"]
 print("Client Commands: ", commands)
+token = None
 
 def register():
-    url = root+"register/"
+    url = root+"user/"
     
     username = input("Username: ")
     email = input("Email: ")
@@ -19,9 +21,40 @@ def register():
             print("Error Occured: ", post.text)
         else:
             print("Registration Successful")
+            login(obj)
+
+            
     except requests.exceptions.RequestException as e:
         print("Exception Occured: ", e)
 
+
+def login(obj = None):
+    global token
+    url = root+"login/"
+    
+    if obj == None:
+        username = input("Username: ")
+        password = input("Password: ")
+
+        obj = {"username": username, "password": password}
+
+    try:
+        post = requests.post(url, json = obj)
+        json = post.json()
+        if "token" in json.keys():
+            token = json["token"]
+            print("Login Successful")
+        else:
+            print("Login Failed", post)
+
+    except requests.exceptions.RequestException as e:
+        print("Exception Occured: ", e)
+
+def logout():
+    token = None
+
+def checkToken():
+    print(token)
 
 # Main loop - command line interface
 while(True):
@@ -30,5 +63,13 @@ while(True):
 
     if command == "exit":
         exit()
+    elif command == "token":
+        checkToken()
     elif command == "register":
         register()
+    elif command == "login":
+        login()
+    elif command == "logout":
+        logout()
+    else:
+        print("Error: Command not found.")
