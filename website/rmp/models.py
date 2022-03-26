@@ -1,3 +1,4 @@
+from email.policy import default
 from django.db.models import Model, CharField, IntegerField, ManyToManyField, ForeignKey, CASCADE
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -29,7 +30,8 @@ class Module(Model):
 
 class Rating(Model):
     user = ForeignKey(CustomUser, on_delete=CASCADE)
-    module = ForeignKey("Module", on_delete=CASCADE)
+    professor = ForeignKey(Professor, on_delete=CASCADE)
+    module = ForeignKey(Module, on_delete=CASCADE)
     value = IntegerField(
         validators=[
         MaxValueValidator(5),
