@@ -1,10 +1,12 @@
 import requests
-import os
 
 root = "http://127.0.0.1:8000/"
 commands = ["register", "login", "logout", "list", "view", "average", "rate", "exit"]
 print("Client Commands: ", commands)
 token = None
+
+def checkToken():
+    print(token)
 
 def register():
     url = root+"user/"
@@ -55,8 +57,11 @@ def logout():
     token = None
     print("Logout Successful")
 
-def checkToken():
-    print(token)
+def list():
+    url = root+"module/"
+    post = requests.get(url)
+    for module in post.json():
+        print(module.values())
 
 # Main loop - command line interface
 while(True):
@@ -73,5 +78,7 @@ while(True):
         login()
     elif command == "logout":
         logout()
+    elif command == "list":
+        list()
     else:
         print("Error: Command not found.")

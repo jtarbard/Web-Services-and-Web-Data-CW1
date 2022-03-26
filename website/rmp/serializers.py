@@ -1,4 +1,4 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, Serializer
 
 from .models import CustomUser, Module, Professor, Rating
 
@@ -15,22 +15,24 @@ class UserSerializer(ModelSerializer):
         extra_kwargs = {'email': {'required': True, 'allow_blank': False}, 'password': {'required': True, 'allow_blank': False, 'allow_null': False, 'write_only': True}}
 
 
-class ModuleSerializer(ModelSerializer):
-
-    class Meta:
-        model = Module
-        fields = ["__all__"]
-
 class ProfessorSerializer(ModelSerializer):
 
     class Meta:
         model = Professor
-        fields = ["__all__"]
+        fields = "__all__"
+
+
+class ModuleSerializer(ModelSerializer):
+
+    professor = ProfessorSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Module
+        fields = "__all__"
+
 
 class RatingSerializer(ModelSerializer):
 
     class Meta:
         model = Rating
         fields = ["user", "module", "value"]
-
-

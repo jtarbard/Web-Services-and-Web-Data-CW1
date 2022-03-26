@@ -11,7 +11,7 @@ class Professor(Model):
     last_name = CharField(max_length=100)
 
 class Module(Model):
-    code = CharField(primary_key=True, max_length=3)
+    code = CharField(max_length=3)
     title = CharField(max_length=150)
     semester = IntegerField(
         validators=[
