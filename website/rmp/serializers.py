@@ -24,7 +24,7 @@ class ProfessorSerializer(ModelSerializer):
 
 class ModuleSerializer(ModelSerializer):
 
-    professor = ProfessorSerializer(many=True, read_only=True)
+    professor = ProfessorSerializer(many=True)
 
     class Meta:
         model = Module
@@ -33,6 +33,8 @@ class ModuleSerializer(ModelSerializer):
 
 class RatingSerializer(ModelSerializer):
 
+    professor = ProfessorSerializer()
+
     class Meta:
         model = Rating
-        fields = ["user", "module", "value"]
+        fields = ["user", "module", "professor", "value"]

@@ -59,9 +59,19 @@ def logout():
 
 def list():
     url = root+"module/"
-    post = requests.get(url)
-    for module in post.json():
+    get = requests.get(url)
+    for module in get.json():
         print(module.values())
+
+def view():
+    url = root+"rating/view"
+    get = requests.get(url, headers={"Authorization": "token {}".format(token)})
+    if get.ok:
+        for rating in get.json():
+            print(rating.values())
+    else:
+        print(get.json())
+
 
 # Main loop - command line interface
 while(True):
@@ -80,5 +90,7 @@ while(True):
         logout()
     elif command == "list":
         list()
+    elif command == "view":
+        view()
     else:
         print("Error: Command not found.")
