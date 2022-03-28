@@ -72,7 +72,17 @@ def list():
     get = requests.get(url, headers={"Authorization": "Token {}".format(token)})
     if get.ok:
         for module in get.json():
-            print(module.values())
+
+            professors = []
+            for professor in module["professor"]:
+                professors.append(("Professor {0}. {1} ({2})".format(professor["first_name"][0], professor["last_name"], professor["id"])))
+            
+
+            print("{:<3} {:^40} {:^4} {:^9} {:<30}".format(module["code"], module["title"], module["year"], module["semester"], professors[0]))
+            
+            for professor in professors[1:]:
+                print("{:<3} {:^40} {:^4} {:^9} {:<30}".format("", "", "", "", professor))
+
     else:
         print("Error: Request failed, status code:", get.status_code, get.reason)
     
