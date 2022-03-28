@@ -56,7 +56,7 @@ class RatingViewSet(ModelViewSet):
         professors = Professor.objects.values()
         for prof in professors:
             ratings = self.queryset.filter(professor=prof["id"])
-            prof["avg"] = ratings.aggregate(Avg("value"))
+            prof["avg"] = round(ratings.aggregate(Avg("value")))
 
         return Response(professors)
 
@@ -74,7 +74,7 @@ class RatingViewSet(ModelViewSet):
         avg = filtered_ratings.aggregate(Avg("value"))
         professor = Professor.objects.get(id=request.data["professor"])
         data = {
-            "avg": avg["value__avg"],
+            "avg": round(avg["value__avg"]),
             "module_title": modules[0].title,
             "module_code": modules[0].code,
             "professor_id": professor.id,
