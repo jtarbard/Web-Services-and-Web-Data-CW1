@@ -1,10 +1,7 @@
-from urllib import request
-from django.contrib.auth import authenticate, login
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.response import Response
 from django.db.models import Avg
 from rest_framework.decorators import action
-from django.forms.models import model_to_dict
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 

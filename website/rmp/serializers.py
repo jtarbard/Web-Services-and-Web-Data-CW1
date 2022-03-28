@@ -1,4 +1,3 @@
-from urllib import request
 from rest_framework.serializers import ModelSerializer
 
 from .models import CustomUser, Module, Professor, Rating

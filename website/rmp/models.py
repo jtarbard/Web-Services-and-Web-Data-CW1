@@ -1,4 +1,3 @@
-from email.policy import default
 from django.db.models import Model, CharField, IntegerField, ManyToManyField, ForeignKey, CASCADE
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
