@@ -1,4 +1,4 @@
-from rest_framework.serializers import ModelSerializer, Serializer
+from rest_framework.serializers import ModelSerializer
 
 from .models import CustomUser, Module, Professor, Rating
 
@@ -32,9 +32,10 @@ class ModuleSerializer(ModelSerializer):
 
 
 class RatingSerializer(ModelSerializer):
-
+    
     professor = ProfessorSerializer()
+    module = ModuleSerializer()
 
     class Meta:
         model = Rating
-        fields = ["user", "module", "professor", "value"]
+        fields = ["user", "value", "module", "professor"]

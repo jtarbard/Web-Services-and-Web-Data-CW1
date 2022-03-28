@@ -30,7 +30,7 @@ class Module(Model):
 
 class Rating(Model):
     user = ForeignKey(CustomUser, on_delete=CASCADE)
-    professor = ForeignKey(Professor, on_delete=CASCADE) #TODO restrict to profs that teach module
+    professor = ForeignKey(Professor, on_delete=CASCADE)
     module = ForeignKey(Module, on_delete=CASCADE)
     value = IntegerField(
         validators=[
