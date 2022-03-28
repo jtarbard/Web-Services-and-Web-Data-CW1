@@ -18,6 +18,8 @@ class UserViewSet(ModelViewSet):
 
 class ModuleViewSet(ReadOnlyModelViewSet):
 
+    permission_classes = [IsAuthenticated,]
+
     queryset = Module.objects.all()
     serializer_class = ModuleSerializer
 
@@ -32,6 +34,8 @@ class ModuleViewSet(ReadOnlyModelViewSet):
         return queryset
 
 class ProfessorViewSet(ReadOnlyModelViewSet):
+
+    permission_classes = [IsAuthenticated,]
 
     queryset = Professor.objects.all()
     serializer_class = ProfessorSerializer

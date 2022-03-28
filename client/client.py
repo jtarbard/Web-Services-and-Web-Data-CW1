@@ -123,7 +123,6 @@ def rate(args):
 
     module_result = module(args[0], args[1], args[2], args[3])
     if module_result == -1:
-        print("Module not found.")
         return -1
 
     url = root+"rating/"
@@ -134,7 +133,6 @@ def rate(args):
         "module": module_result[0]["id"],
         "value": args[4]
     }
-    print(obj)
 
     post = requests.post(url, obj, headers={
                          "Authorization": "Token {}".format(token)})
@@ -156,6 +154,7 @@ def module(professor_id, moduleCode, year, semester):
         return get.json()
     else:
         print("Error: Request failed, status code:", get.status_code, get.reason)
+        return -1
 
 
 # Ratings is a helper function to view ratings for administration purposes.
