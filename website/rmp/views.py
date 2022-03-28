@@ -58,14 +58,19 @@ class RatingViewSet(ModelViewSet):
 
         return Response(professors)
 
-    @action(detail=True, methods=["GET"])
-    def average(self, request, pk=None):
-        try:
-            moduleCode = request.json["module_code"]
-            professor_id = request.json["professor_id"]
-            #todo return error on none
-            ratings = self.queryset.filter(module_code=moduleCode, professor=professor_id)
-            avg = ratings.aggregate(Avg("value"))
-            return Response(avg)
-        except:
-            return Response(error)
+    @action(detail=False, methods=["post"])
+    def average(self, request):
+        modules = Module.objects.filter(code=request.data["module_code"], professor=request.data["professor"])
+        if modules is None:
+            return Response("Module could not be found.")
+
+        module_ids = []
+        for module in modules:
+            module_ids.append(module.id)
+        print(module_ids)
+
+        filtered_ratings = self.queryset.filter(module_id__in=module_ids)
+        print(filtered_ratings)
+        avg = filtered_ratings.aggregate(Avg("value"))
+
+        return Response(avg)

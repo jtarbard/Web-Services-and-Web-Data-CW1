@@ -21,12 +21,17 @@ def view():
 
 
 def average(args):
-    url = root+"rating/average"
 
-    obj = {"module_code": args[0], "professor_id": args[1]}
-    get = requests.get(url, obj, headers={"Authorization": "Token {}".format(token)})
+    if len(args) < 2:
+        print("Missing arguments.")
+        return -1
 
-    print(get.json())
+    url = root+"rating/average/"
+
+    obj = {"module_code": args[0], "professor": args[1]}
+    post = requests.post(url, obj, headers={"Authorization": "Token {}".format(token)})
+
+    print(post.json())
 
 
 def module(professor_id, moduleCode, year, semester):
@@ -42,6 +47,7 @@ def module(professor_id, moduleCode, year, semester):
 
 def rate(args):
     global module
+
     if len(args) < 5:
         return "Missing arguments."
     
@@ -64,6 +70,16 @@ def rate(args):
     json = post.json()
     print(json)
 
+
+def ratings():
+
+    url = root+"rating/"
+    get = requests.get(url, headers={"Authorization": "Token {}".format(token)})
+    if get.ok:
+        json = get.json()
+        print(json)
+    else:
+        print(get)
 
 def logout():
     try:
@@ -101,19 +117,19 @@ def login(args):
         print("Exception Occured: ", e)
 
 
-def register(username, email, password):
+def register(args):
     
     if len(args) < 3:
         return "Missing arguments."
 
-    url = root+"user/register"
+    url = root+"user/"
 
-    obj = {"username": username, "email": email, "password": password}
+    obj = {"username": args[0], "email": args[1], "password": args[2]}
 
     try:
         post = requests.post(url, json = obj)
-        if post.status_code != 201:
-            print("Error Occured: ", post.text)
+        if post.status_code == 201:
+            print("Error Occured: ", post.status_code)
         else:
             print("Registration Successful")
 
@@ -145,6 +161,8 @@ def main(args):
         average(args)
     elif command == "rate":
         rate(args)
+    elif command == "ratings":
+        ratings()
     else:
         print("Error: Command not found.")
 
