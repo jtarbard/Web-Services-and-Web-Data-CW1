@@ -125,7 +125,7 @@ def average(args):
     post = requests.post(url, obj, headers={"Authorization": "Token {}".format(token)})
     if post.ok:
         json = post.json()
-        print("The raing of Professor {}. {} ({}) in module {} ({}) is {}".format(json["first_name"][0], json["last_name"], json["professor_id"], json["module_title"], json["module_code"], json["avg"]))    
+        print("The rating of Professor {}. {} ({}) in module {} ({}) is {}".format(json["first_name"][0], json["last_name"], json["professor_id"], json["module_title"], json["module_code"], json["avg"]))    
     else:
         print("Error: Request failed, status code:", post.status_code, post.reason)
 

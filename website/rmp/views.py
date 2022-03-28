@@ -57,7 +57,8 @@ class RatingViewSet(ModelViewSet):
         for prof in professors:
             ratings = self.queryset.filter(professor=prof["id"])
             prof["avg"] = ratings.aggregate(Avg("value"))
-            prof["avg"]["value__avg"] = round(prof["avg"]["value__avg"])
+            if prof["avg"]["value__avg"] is not None:
+                prof["avg"]["value__avg"] = round(prof["avg"]["value__avg"])
 
         return Response(professors)
 
