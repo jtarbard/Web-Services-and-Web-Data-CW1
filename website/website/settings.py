@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-dew75qsr1a(h=1s--5bwx7@ox%k9h1t-gu7rflf4=2rjzt4-zb
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["sc18jt.pythonanywhere.com"]
+ALLOWED_HOSTS = ["sc18jt.pythonanywhere.com", '127.0.0.1']
 
 # Application definition
 
@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'rmp',
 ]
 
-SITE_ID = 1
+SITE_ID = 2
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

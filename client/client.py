@@ -139,7 +139,7 @@ def rate(args):
         return -1
 
     url = root+"rating/"
-
+    
     obj = {
         "user": -1,
         "professor": args[0],
@@ -163,8 +163,11 @@ def module(professor_id, moduleCode, year, semester):
     get = requests.get(
         url, headers={"Authorization": "Token {}".format(token)})
 
-    if get.ok:
+    if len(get.json()) > 0:
         return get.json()
+    elif len(get.json()) == 0:
+        print("Error: Request failed, module not found.")
+        return -1
     else:
         print("Error: Request failed, status code:", get.status_code, get.reason)
         return -1
@@ -177,7 +180,7 @@ def ratings():
     get = requests.get(
         url, headers={"Authorization": "Token {}".format(token)})
     if get.ok:
-        print("Rating added.")
+        print(get.json())
     else:
         print("Error: Request failed, status code:", get.status_code, get.reason)
 
