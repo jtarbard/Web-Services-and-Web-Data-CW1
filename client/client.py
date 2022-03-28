@@ -4,22 +4,33 @@ import requests
 
 
 # Register is used to allow a user to register to the service using a username, email and a password.
-def register(args):
+def register():
 
     if token is not None:
         print("You are currently logged in, logging you out.")
         logout()
 
-    if len(args) < 3:
-        return "Missing arguments."
-
     url = root+"user/"
 
-    obj = {"username": args[0], "email": args[1], "password": args[2]}
+    username = input("Username: ")
+    email = input("Email: ")
+    password1 = input("Password: ")
+    password2 = input("Repeat Password: ")
+    while(password1 != password2):
+        password2 = input("Passwords do not match, repeat password: ")
+
+    obj = {
+        "username": username, 
+        "email": email, 
+        "password": password1
+    }
 
     try:
-        post = requests.post(url, json=obj)
+        post = requests.post(url, obj)
         if post.ok:
+            with open("url.pkl", "wb") as file:
+                pickle.dump(root, file)
+
             print("Registration Successful, use the command 'login' to log in to the api.")
         else:
             print("Error: Request failed, status code:", post.status_code, post.reason)
@@ -29,24 +40,26 @@ def register(args):
 
 
 # Login is used to log in to the service.
-def login(args):
+def login():
     global token
-
-    if len(args) < 2:
-        print("Missing arguments.")
-        return -1
 
     url = root+"api-token-auth/"
 
-    obj = {"username": args[0], "password": args[1]}
+    obj = {
+        "username": input("Username: "),
+        "password": input("Password: ")
+    }
 
     try:
-        post = requests.post(url, json=obj)
+        post = requests.post(url, obj)
 
         if post.ok:
             json = post.json()
             with open("token.pkl", "wb") as file:
                 pickle.dump(json["token"], file)
+
+            with open("url.pkl", "wb") as file:
+                pickle.dump(root, file)
 
             print("Login Successful")
         else:
@@ -164,16 +177,20 @@ def ratings():
     get = requests.get(
         url, headers={"Authorization": "Token {}".format(token)})
     if get.ok:
-        json = get.json()
-        print(json)
+        print("Rating added.")
     else:
         print("Error: Request failed, status code:", get.status_code, get.reason)
 
 
 # Main loop - command line interface
 def main(args):
+    global root
     command = args[0]
     args = args[1:]
+
+    if root is None and not (command == "register" or command == "login"):
+        print("You must login or register before using other commands.")
+        return -1
 
     if command == "exit":
         exit()
@@ -185,16 +202,18 @@ def main(args):
         print(token)
 
     elif command == "register":
-        if len(args) == 3:
-            register(args)
+        if len(args) == 1:
+            root = args[0]
+            register()
         else:
-            print("Error: Arguments incorrect for command register, 3 expected: username, email, password.")
+            print("Error: Arguments incorrect for command register, 1 expected: url")
 
     elif command == "login":
-        if len(args) == 2:
-            login(args)
+        if len(args) == 1:
+            root = args[0]
+            login()
         else:
-            print("Error: Arguments incorrect for command login, 2 expected: username, password.")
+            print("Error: Arguments incorrect for command login, 1 expected: url.")
 
     elif command == "logout":
         logout()
@@ -236,6 +255,13 @@ if __name__ == "__main__":
             token = pickle.load(file)
     except:
         token = None
+
+    try:
+        with open("url.pkl", "rb") as file:
+            root = pickle.load(file)
+    except:
+        root = None
+
 
     if len(sys.argv) > 1:
         args = sys.argv[1:]
