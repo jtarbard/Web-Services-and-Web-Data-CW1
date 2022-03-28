@@ -4,6 +4,7 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.response import Response
 from django.db.models import Avg
 from rest_framework.decorators import action
+from django.forms.models import model_to_dict
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 
@@ -67,10 +68,16 @@ class RatingViewSet(ModelViewSet):
         module_ids = []
         for module in modules:
             module_ids.append(module.id)
-        print(module_ids)
 
         filtered_ratings = self.queryset.filter(module_id__in=module_ids)
-        print(filtered_ratings)
         avg = filtered_ratings.aggregate(Avg("value"))
-
-        return Response(avg)
+        professor = Professor.objects.get(id=request.data["professor"])
+        data = {
+            "avg": avg["value__avg"],
+            "module_title": modules[0].title,
+            "module_code": modules[0].code,
+            "professor_id": professor.id,
+            "first_name": professor.first_name,
+            "last_name": professor.last_name,
+        }
+        return Response(data)
