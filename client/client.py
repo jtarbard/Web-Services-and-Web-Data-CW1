@@ -195,9 +195,6 @@ def main(args):
         print("You must login or register before using other commands.")
         return -1
 
-    if command == "exit":
-        exit()
-
     elif command == "commands":
         print(commands)
 
@@ -250,7 +247,7 @@ def main(args):
 if __name__ == "__main__":
     root = "http://127.0.0.1:8000/"
     commands = ["register", "login", "logout",
-                "list", "view", "average", "rate", "exit"]
+                "list", "view", "average", "rate"]
     token = None
 
     try:
