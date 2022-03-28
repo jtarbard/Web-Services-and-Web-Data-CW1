@@ -4,7 +4,7 @@ import requests
 
 def list():
     url = root+"module/"
-    get = requests.get(url)
+    get = requests.get(url, headers={"Authorization": "Token {}".format(token)})
     for module in get.json():
         print(module.values())
 
@@ -20,23 +20,19 @@ def view():
         print(get.json())
 
 
-def average():
+def average(args):
     url = root+"rating/average"
-    professor_id = input("Professor's Id: ")
-    module_code = input("Module'a Code: ")
 
-
-    obj = {"module_code": module_code, "professor_id": professor_id}
+    obj = {"module_code": args[0], "professor_id": args[1]}
     get = requests.get(url, obj, headers={"Authorization": "Token {}".format(token)})
 
     print(get.json())
 
 
 def module(professor_id, moduleCode, year, semester):
-    global header
     query = "code=" + moduleCode + "&professor_id=" + professor_id + "&year=" + year + "&semester=" + semester
     url = root+"module?"+query
-    get = requests.get(url, headers=header)
+    get = requests.get(url, headers={"Authorization": "Token {}".format(token)})
 
     if get.ok:
         return get.json()
@@ -45,27 +41,29 @@ def module(professor_id, moduleCode, year, semester):
 
 
 def rate(args):
-    global module, header
+    global module
     if len(args) < 5:
         return "Missing arguments."
     
-    modules = module(args[0], args[1], args[2], args[3])
-    if modules == -1:
-        return "Module not found."
+    module_result = module(args[0], args[1], args[2], args[3])
+    if module_result == -1:
+        print("Module not found.")
+        return -1
 
     url = root+"rating/"
 
     obj = {
-        "professor_id": args[0], 
-        "module_code": args[1], 
-        "year": args[2],
-        "semester": args[3],
-        "rating": args[4]
+        "user": -1,
+        "professor": args[0], 
+        "module": module_result[0]["id"],
+        "value": args[4]
     }
-    post = requests.post(url, obj, headers=header)
-
     print(obj)
-    return post
+
+    post = requests.post(url, obj, headers={"Authorization": "Token {}".format(token)})
+    json = post.json()
+    print(json)
+
 
 def logout():
     try:
@@ -74,6 +72,7 @@ def logout():
         print("Logout Sucsessful.")
     except:
         print("Logout Failed.")
+
 
 def login(args):
     global token
@@ -122,6 +121,7 @@ def register(username, email, password):
     except requests.exceptions.RequestException as e:
         print("Exception Occured: ", e)
 
+
 # Main loop - command line interface
 def main(args):
     command = args[0]
@@ -142,11 +142,12 @@ def main(args):
     elif command == "view":
         view()
     elif command == "average":
-        average()
+        average(args)
     elif command == "rate":
-        rate()
+        rate(args)
     else:
         print("Error: Command not found.")
+
 
 if __name__ == "__main__":
     root = "http://127.0.0.1:8000/"

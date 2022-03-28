@@ -1,3 +1,4 @@
+from urllib import request
 from django.contrib.auth import authenticate, login
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.response import Response
@@ -41,6 +42,12 @@ class RatingViewSet(ModelViewSet):
 
     queryset = Rating.objects.all()
     serializer_class = RatingSerializer
+
+    def create(self, request):
+        request.data._mutable = True
+        request.data["user"] = request.user.id
+        request.data._mutable = False
+        return super().create(request)
 
     @action(detail=False)
     def view(self, request):

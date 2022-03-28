@@ -1,3 +1,4 @@
+from urllib import request
 from rest_framework.serializers import ModelSerializer
 
 from .models import CustomUser, Module, Professor, Rating
@@ -32,9 +33,6 @@ class ModuleSerializer(ModelSerializer):
 
 
 class RatingSerializer(ModelSerializer):
-    
-    professor = ProfessorSerializer()
-    module = ModuleSerializer()
 
     class Meta:
         model = Rating
