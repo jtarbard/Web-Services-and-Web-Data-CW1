@@ -22,7 +22,7 @@ def register(args):
         if post.ok:
             print("Registration Successful, use the command 'login' to log in to the api.")
         else:
-            print("Error: Request failed, status code:", post.status_code)
+            print("Error: Request failed, status code:", post.status_code, post.reason)
 
     except requests.exceptions.RequestException as e:
         print("Exception Occured: ", e)
@@ -50,7 +50,7 @@ def login(args):
 
             print("Login Successful")
         else:
-            print("Error: Request failed, status code:", post.status_code)
+            print("Error: Request failed, status code:", post.status_code, post.reason)
 
     except requests.exceptions.RequestException as e:
         print("Exception Occured: ", e)
@@ -74,7 +74,7 @@ def list():
         for module in get.json():
             print(module.values())
     else:
-        print("Error: Request failed, status code:", get.status_code)
+        print("Error: Request failed, status code:", get.status_code, get.reason)
     
 
 # View is used to view the rating of all professors
@@ -84,9 +84,9 @@ def view():
     get = requests.get(url, headers={"Authorization": "Token {}".format(token)})
     if get.ok:
         for rating in get.json():
-            print(rating.values())
+            print("The rating of Professor {0}. {1} ({2}) is {3}".format(rating["first_name"][0], rating["last_name"], rating["id"], rating["avg"]["value__avg"]))
     else:
-        print("Error: Request failed, status code:", get.status_code)
+        print("Error: Request failed, status code:", get.status_code, get.reason)
 
 
 # Average is used to view the average rating of a certain professor in a certain module
@@ -103,7 +103,7 @@ def average(args):
     if post.ok:
         print(post.json())
     else:
-        print("Error: Request failed, status code:", post.status_code)
+        print("Error: Request failed, status code:", post.status_code, post.reason)
 
 
 # Rate is used to rate the teaching of a certain professor in a certain module instance
@@ -130,7 +130,7 @@ def rate(args):
     if post.ok:
         print(post.json)
     else:
-        print("Error: Request failed, status code:", post.status_code)
+        print("Error: Request failed, status code:", post.status_code, post.reason)
 
 
 # Module is a helper function used to obtain a module instance.
@@ -144,7 +144,7 @@ def module(professor_id, moduleCode, year, semester):
     if get.ok:
         return get.json()
     else:
-        print("Error: Request failed, status code:", get.status_code)
+        print("Error: Request failed, status code:", get.status_code, get.reason)
 
 
 # Ratings is a helper function to view ratings for administration purposes.
@@ -157,7 +157,7 @@ def ratings():
         json = get.json()
         print(json)
     else:
-        print("Error: Request failed, status code:", get.status_code)
+        print("Error: Request failed, status code:", get.status_code, get.reason)
 
 
 # Main loop - command line interface
@@ -167,6 +167,9 @@ def main(args):
 
     if command == "exit":
         exit()
+
+    elif command == "commands":
+        print(commands)
 
     elif command == "token":
         print(token)
