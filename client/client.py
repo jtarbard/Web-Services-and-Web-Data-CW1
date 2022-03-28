@@ -3,105 +3,32 @@ import pickle
 import requests
 
 
-def list():
-    url = root+"module/"
-    get = requests.get(url, headers={"Authorization": "Token {}".format(token)})
-    if get.ok:
-        for module in get.json():
-            print(module.values())
-    else:
-        print("Error: Request failed, status code:", get.status_code)
-    
+# Register is used to allow a user to register to the service using a username, email and a password.
+def register(args):
 
+    if token is not None:
+        print("You are currently logged in, logging you out.")
+        logout()
 
-def view():
-    global header
-    url = root+"rating/view"
-    get = requests.get(url, headers={"Authorization": "Token {}".format(token)})
-    if get.ok:
-        for rating in get.json():
-            print(rating.values())
-    else:
-        print("Error: Request failed, status code:", get.status_code)
+    if len(args) < 3:
+        return "Missing arguments."
 
+    url = root+"user/"
 
+    obj = {"username": args[0], "email": args[1], "password": args[2]}
 
-def average(args):
-
-    if len(args) < 2:
-        print("Missing arguments.")
-        return -1
-
-    url = root+"rating/average/"
-
-    obj = {"module_code": args[0], "professor": args[1]}
-    post = requests.post(url, obj, headers={"Authorization": "Token {}".format(token)})
-    if post.ok:
-        print(post.json())
-    else:
-        print("Error: Request failed, status code:", post.status_code)
-
-
-def module(professor_id, moduleCode, year, semester):
-    query = "code=" + moduleCode + "&professor_id=" + \
-        professor_id + "&year=" + year + "&semester=" + semester
-    url = root+"module?"+query
-    get = requests.get(
-        url, headers={"Authorization": "Token {}".format(token)})
-
-    if get.ok:
-        return get.json()
-    else:
-        print("Error: Request failed, status code:", get.status_code)
-
-
-def rate(args):
-    global module
-
-    module_result = module(args[0], args[1], args[2], args[3])
-    if module_result == -1:
-        print("Module not found.")
-        return -1
-
-    url = root+"rating/"
-
-    obj = {
-        "user": -1,
-        "professor": args[0],
-        "module": module_result[0]["id"],
-        "value": args[4]
-    }
-    print(obj)
-
-    post = requests.post(url, obj, headers={
-                         "Authorization": "Token {}".format(token)})
-    if post.ok:
-        print(post.json)
-    else:
-        print("Error: Request failed, status code:", post.status_code)
-
-
-def ratings():
-
-    url = root+"rating/"
-    get = requests.get(
-        url, headers={"Authorization": "Token {}".format(token)})
-    if get.ok:
-        json = get.json()
-        print(json)
-    else:
-        print("Error: Request failed, status code:", get.status_code)
-
-
-def logout():
     try:
-        with open("token.pkl", "wb") as file:
-            pickle.dump(None, file)
-        print("Logout Sucsessful.")
-    except:
-        print("Logout Failed.")
+        post = requests.post(url, json=obj)
+        if post.ok:
+            print("Registration Successful, use the command 'login' to log in to the api.")
+        else:
+            print("Error: Request failed, status code:", post.status_code)
+
+    except requests.exceptions.RequestException as e:
+        print("Exception Occured: ", e)
 
 
+# Login is used to log in to the service.
 def login(args):
     global token
 
@@ -129,28 +56,108 @@ def login(args):
         print("Exception Occured: ", e)
 
 
-def register(args):
-
-    if token is not None:
-        print("You are currently logged in, logging you out.")
-        logout()
-
-    if len(args) < 3:
-        return "Missing arguments."
-
-    url = root+"user/"
-
-    obj = {"username": args[0], "email": args[1], "password": args[2]}
-
+# Logout causes the user to logout from the current session.
+def logout():
     try:
-        post = requests.post(url, json=obj)
-        if post.ok:
-            print("Registration Successful, use the command 'login' to log in to the api.")
-        else:
-            print("Error: Request failed, status code:", post.status_code)
+        with open("token.pkl", "wb") as file:
+            pickle.dump(None, file)
+        print("Logout Sucsessful.")
+    except:
+        print("Logout Failed.")
 
-    except requests.exceptions.RequestException as e:
-        print("Exception Occured: ", e)
+
+# List is used to view a list of all module instances and the professor(s) teaching each of them.
+def list():
+    url = root+"module/"
+    get = requests.get(url, headers={"Authorization": "Token {}".format(token)})
+    if get.ok:
+        for module in get.json():
+            print(module.values())
+    else:
+        print("Error: Request failed, status code:", get.status_code)
+    
+
+# View is used to view the rating of all professors
+def view():
+    global header
+    url = root+"rating/view"
+    get = requests.get(url, headers={"Authorization": "Token {}".format(token)})
+    if get.ok:
+        for rating in get.json():
+            print(rating.values())
+    else:
+        print("Error: Request failed, status code:", get.status_code)
+
+
+# Average is used to view the average rating of a certain professor in a certain module
+def average(args):
+
+    if len(args) < 2:
+        print("Missing arguments.")
+        return -1
+
+    url = root+"rating/average/"
+
+    obj = {"module_code": args[0], "professor": args[1]}
+    post = requests.post(url, obj, headers={"Authorization": "Token {}".format(token)})
+    if post.ok:
+        print(post.json())
+    else:
+        print("Error: Request failed, status code:", post.status_code)
+
+
+# Rate is used to rate the teaching of a certain professor in a certain module instance
+def rate(args):
+    global module
+
+    module_result = module(args[0], args[1], args[2], args[3])
+    if module_result == -1:
+        print("Module not found.")
+        return -1
+
+    url = root+"rating/"
+
+    obj = {
+        "user": -1,
+        "professor": args[0],
+        "module": module_result[0]["id"],
+        "value": args[4]
+    }
+    print(obj)
+
+    post = requests.post(url, obj, headers={
+                         "Authorization": "Token {}".format(token)})
+    if post.ok:
+        print(post.json)
+    else:
+        print("Error: Request failed, status code:", post.status_code)
+
+
+# Module is a helper function used to obtain a module instance.
+def module(professor_id, moduleCode, year, semester):
+    query = "code=" + moduleCode + "&professor_id=" + \
+        professor_id + "&year=" + year + "&semester=" + semester
+    url = root+"module?"+query
+    get = requests.get(
+        url, headers={"Authorization": "Token {}".format(token)})
+
+    if get.ok:
+        return get.json()
+    else:
+        print("Error: Request failed, status code:", get.status_code)
+
+
+# Ratings is a helper function to view ratings for administration purposes.
+def ratings():
+
+    url = root+"rating/"
+    get = requests.get(
+        url, headers={"Authorization": "Token {}".format(token)})
+    if get.ok:
+        json = get.json()
+        print(json)
+    else:
+        print("Error: Request failed, status code:", get.status_code)
 
 
 # Main loop - command line interface
